@@ -26,16 +26,48 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
     }
 
-    const extractVideoId = (url: string) => {
+    const extractVideoId = (rawUrl: string) => {
+        try {
+            const parsedUrl = new URL(rawUrl);
+            const hostname = parsedUrl.hostname.replace(/^www\./, '');
+            const playlistId = parsedUrl.searchParams.get('list');
+
+            if (playlistId) {
+                return { type: 'playlist', id: playlistId };
+            }
+
+            if (hostname === 'youtu.be') {
+                const idFromPath = parsedUrl.pathname.split('/')[1];
+                return { type: 'video', id: idFromPath || null };
+            }
+
+            const pathParts = parsedUrl.pathname.split('/').filter(Boolean);
+            const pathPrefix = pathParts[0];
+            const pathId = pathParts[1];
+
+            if (pathPrefix === 'shorts' || pathPrefix === 'embed') {
+                return { type: 'video', id: pathId || null };
+            }
+
+            const videoId = parsedUrl.searchParams.get('v');
+            if (videoId) {
+                return { type: 'video', id: videoId };
+            }
+        } catch (error) {
+            // fall through to regex fallback
+        }
+
         const videoRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
         const playlistRegex = /(?:youtube\.com\/playlist\?list=)([a-zA-Z0-9_-]+)/;
-        
-        if (url.match(playlistRegex)) {
-            return { type: 'playlist', id: url.match(playlistRegex)?.[1] || null };
-        } else if (url.match(videoRegex)) {
-            return { type: 'video', id: url.match(videoRegex)?.[1] || null };
+
+        if (rawUrl.match(playlistRegex)) {
+            return { type: 'playlist', id: rawUrl.match(playlistRegex)?.[1] || null };
         }
-        
+
+        if (rawUrl.match(videoRegex)) {
+            return { type: 'video', id: rawUrl.match(videoRegex)?.[1] || null };
+        }
+
         return { type: null, id: null };
     };
 
@@ -49,11 +81,17 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ message: 'This is a playlist' }, { status: 200 });
     }
 
+    const apiKey = process.env.RAPID_API_KEY;
+
+    if (!apiKey) {
+        return NextResponse.json({ error: 'Missing RAPID_API_KEY in environment' }, { status: 500 });
+    }
+
     const apiUrl = `https://ytstream-download-youtube-videos.p.rapidapi.com/dl?id=${encodeURIComponent(id)}`;
     const options = {
         method: 'GET',
         headers: {
-            'x-rapidapi-key': process.env.RAPID_API_KEY as string,
+            'x-rapidapi-key': apiKey,
             'x-rapidapi-host': 'ytstream-download-youtube-videos.p.rapidapi.com',
         },
     };

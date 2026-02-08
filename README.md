@@ -51,7 +51,7 @@ $ npm run dev
 ```
 1. Create A `.env` file and add the following:
 ```
-`NEXT_PUBLIC_RAPID_API_KEY=YOUR_RAPID_API_KEY`
+`RAPID_API_KEY=YOUR_RAPID_API_KEY`
 * You can get this APIKEY from [here](https://rapidapi.com/ytjar/api/ytstream-download-youtube-videos)
 
 ## Live Preview
@@ -82,4 +82,3 @@ MIT
 > [prestonmayieka.tech](https://www.prestonmayieka.tech) &nbsp;&middot;&nbsp;
 > GitHub [@preston176](https://github.com/preston176) &nbsp;&middot;&nbsp;
 > Twitter [@preston_mayieka](https://twitter.com/preston_mayieka)
-
