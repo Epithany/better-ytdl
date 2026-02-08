@@ -23,8 +23,8 @@ const Navbar = () => {
     };
 
     return (
-        <div className="w-full max-w-screen fixed top-0 left-0 z-50 backdrop-blur">
-            <div className="md:flex items-center justify-center py-4 md:px-10 px-7">
+        <div className="w-full max-w-screen fixed top-0 left-0 z-50">
+            <div className="md:flex items-center justify-center py-4 md:px-10 px-7 glass-panel mx-4 mt-4">
 
 
                 {/* md: mobile icons */}
@@ -37,7 +37,7 @@ const Navbar = () => {
 
                 {/* navbar */}
                 <ul
-                    className={`sticky md:flex md:items-center md:pd-0 md:static md:z-auto z-10 left-0 w-full md:w-auto mt-4 md:pl-0 pl-9 bg-slate-400 sm:bg-transparent transition-all duration-500 ease-in-out mobile-menu`}
+                    className={`sticky md:flex md:items-center md:pd-0 md:static md:z-auto z-10 left-0 w-full md:w-auto mt-4 md:pl-0 pl-9 bg-white/70 sm:bg-transparent transition-all duration-500 ease-in-out mobile-menu ${open ? 'open' : ''}`}
                 >
                     {links.map((item, index) => (
                         <li key={index} className="md:ml-8 md:my-0 my:7 font-semibold">
